@@ -1,0 +1,482 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', 'Segoe UI', 'Arial', sans-serif;
+}
+
+:root {
+    --primary-color: #4361ee;
+    --primary-dark: #3a56d4;
+    --secondary-color: #7209b7;
+    --accent-color: #f72585;
+    --success-color: #4cc9f0;
+    --warning-color: #f77f00;
+    --error-color: #d62828;
+    --light-bg: #f8f9fa;
+    --dark-bg: #212529;
+    --grid-border: #3a0ca3;
+    --cell-border: #4895ef;
+    --original-number: #3a0ca3;
+    --solved-number: #4cc9f0;
+    --highlight-color: #e9ecef;
+    --hover-color: #e6f2ff;
+    --focus-color: #d0e8ff;
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+body {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    position: relative;
+    overflow-x: hidden;
+    font-family: 'Poppins', sans-serif;
+    transition: background var(--transition-slow);
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="none" width="100" height="100"/><rect fill="rgba(67, 97, 238, 0.05)" x="25" y="25" width="50" height="50"/><rect fill="rgba(67, 97, 238, 0.05)" x="0" y="0" width="25" height="25"/><rect fill="rgba(67, 97, 238, 0.05)" x="75" y="0" width="25" height="25"/><rect fill="rgba(67, 97, 238, 0.05)" x="0" y="75" width="25" height="25"/><rect fill="rgba(67, 97, 238, 0.05)" x="75" y="75" width="25" height="25"/></svg>');
+    opacity: 0.5;
+    z-index: -1;
+}
+
+.container {
+    max-width: 650px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.8s ease-out;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border-radius: 50%;
+    opacity: 0.1;
+}
+
+.container::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    left: -50px;
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--secondary-color) 100%);
+    border-radius: 50%;
+    opacity: 0.1;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 2px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+button {
+    padding: 0.7rem 1.4rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: all 0.5s ease;
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+#solve-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+#solve-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
+}
+
+#solve-btn.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+#solve-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: calc(50% - 10px);
+    right: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+}
+
+#clear-btn {
+    background: linear-gradient(135deg, var(--error-color) 0%, #c1121f 100%);
+    color: white;
+}
+
+#clear-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(214, 40, 40, 0.3);
+}
+
+#example-btn {
+    background: linear-gradient(135deg, var(--success-color) 0%, #3a86ff 100%);
+    color: white;
+}
+
+#example-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(76, 201, 240, 0.3);
+}
+
+.error {
+    color: var(--error-color);
+    text-align: center;
+    margin-bottom: 1rem;
+    min-height: 1.5rem;
+    font-weight: bold;
+    animation: shake 0.5s ease-in-out;
+    transition: color 0.3s ease;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 1px;
+    margin: 0 auto;
+    max-width: 500px;
+    width: 100%;
+    border: 3px solid var(--grid-border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    background-color: var(--grid-border);
+    position: relative;
+}
+
+.shake-grid {
+    animation: shake 0.5s ease-in-out;
+}
+
+.cell {
+    width: 100%;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border: 1px solid var(--cell-border);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    box-sizing: border-box;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.cell:hover {
+    background-color: var(--hover-color);
+    transform: scale(1.02);
+    z-index: 1;
+    box-shadow: 0 0 8px rgba(67, 97, 238, 0.2);
+}
+
+.cell.filled {
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.cell.filled:hover {
+    background-color: #e6f2ff;
+}
+
+.shake-cell {
+    animation: shake 0.5s ease-in-out;
+    border: 1px solid var(--error-color) !important;
+    box-shadow: 0 0 5px var(--error-color);
+}
+
+.cell.original-cell {
+    background-color: #f0f7ff;
+}
+
+.cell.original-cell::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(114, 9, 183, 0.05) 100%);
+    z-index: -1;
+}
+
+.cell input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    background: transparent;
+    color: var(--original-number);
+    transition: all var(--transition-normal);
+    border-radius: 4px;
+}
+
+.cell input:focus {
+    outline: none;
+    background-color: var(--focus-color);
+    box-shadow: inset 0 0 0 2px var(--primary-color);
+    transform: scale(1.05);
+}
+
+/* Border styling for 3x3 boxes */
+.cell:nth-child(3n) {
+    border-right: 2px solid var(--grid-border);
+}
+
+.cell:nth-child(9n) {
+    border-right: none;
+}
+
+/* Add bottom border for every 3rd row */
+.cell:nth-child(n+19):nth-child(-n+27),
+.cell:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 2px solid var(--grid-border);
+}
+
+/* Highlight original numbers */
+.original {
+    color: var(--original-number) !important;
+    background-color: var(--highlight-color);
+    font-weight: 700;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Highlight solved numbers */
+.solved {
+    color: var(--solved-number) !important;
+    animation: popIn 0.5s ease-out;
+    text-shadow: 0 1px 1px rgba(76, 201, 240, 0.3);
+}
+
+.instructions {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: var(--light-bg);
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    border-left: 4px solid var(--primary-color);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.instructions:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.instructions h2 {
+    margin-bottom: 0.8rem;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+}
+
+.instructions p {
+    margin-bottom: 0.5rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.instructions p::before {
+    content: '•';
+    position: absolute;
+    left: 0.5rem;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    margin: 2rem 0 1rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+footer p {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Enhanced pulse animation with color change for filled cells */
+@keyframes pulseWithColor {
+    0% { transform: scale(1); background-color: rgba(67, 97, 238, 0.05); }
+    50% { transform: scale(1.05); background-color: rgba(67, 97, 238, 0.1); }
+    100% { transform: scale(1); background-color: rgba(67, 97, 238, 0.05); }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(67, 97, 238, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(67, 97, 238, 0.6); }
+    100% { box-shadow: 0 0 5px rgba(67, 97, 238, 0.3); }
+}
+
+/* Responsive design */
+@media (max-width: 700px) {
+    .container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .grid {
+        max-width: 100%;
+    }
+    
+    .cell {
+        font-size: 1.1rem;
+    }
+    
+    .cell input {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 500px) {
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .cell {
+        font-size: 1rem;
+    }
+    
+    .cell input {
+        font-size: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+}
